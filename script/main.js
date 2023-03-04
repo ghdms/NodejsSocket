@@ -10,6 +10,10 @@ function now() {
   return moment().format('YY.M.D ddd HH:mm:ss');
 }
 
+function isBottomScroll() {
+  return window.outerHeight + window.scrollY >= document.body.scrollHeight;
+}
+
 const messages = document.getElementById('messages');
 function appendChildMessage(message, from) {
   const item = document.createElement('pre');
@@ -31,6 +35,10 @@ function appendChildMessage(message, from) {
     item.style.marginLeft = 'auto';
   }
   messages.appendChild(item);
+
+  if (from === 'me' || isBottomScroll()) {
+    window.scrollTo(0, document.body.scrollHeight);
+  }
 }
 
 let nickname;
@@ -98,10 +106,6 @@ socket.on('chat message', ({nickname: senderName, message}) => {
   }
 
   appendChildMessage(message, isMyMsg ? 'me' : 'you');
-
-  if (isMyMsg) {
-    window.scrollTo(0, document.body.scrollHeight);
-  }
 });
 
 function sendMessage(event) {
