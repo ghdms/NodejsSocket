@@ -82,7 +82,7 @@ socket.on('chat message', ({nickname: senderName, message}) => {
   window.scrollTo(0, document.body.scrollHeight);
 });
 
-function submit(event) {
+function sendMessage(event) {
   event.preventDefault();
   if (!input.value) {
     return;
@@ -105,7 +105,7 @@ function inputKeyDown(event) {
     return;
   }
 
-  submit(event);
+  sendMessage(event);
 };
 
 form.addEventListener('input', event => {

@@ -5,9 +5,9 @@
   </head>
   <body>
     <ul id="messages"></ul>
-    <form id="form" action="">
+    <form id="form">
       <textarea id="input" onkeydown="inputKeyDown(event)" autofocus></textarea>
-      <button class="send_button" type="submit">Send</button>
+      <button class="send_button" type="button" onclick="sendMessage(event)">Send</button>
     </form>
     <div id="typing" class="typing" hidden></div>
     <div id="members_count" class="members_count"></div>
