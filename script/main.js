@@ -5,12 +5,20 @@ const socket = io();
 const messages = document.getElementById('messages');
 const form = document.getElementById('form');
 
-let input = document.getElementById('input');
-let typing = document.getElementById('typing');
-let membersCount = document.getElementById('members_count');
+const input = document.getElementById('input');
+const typing = document.getElementById('typing');
+const membersCount = document.getElementById('members_count');
 
 function now() {
   return moment().format('YY.M.D ddd HH:mm:ss');
+}
+
+function appendChildMessage(message, textAlign, fontSize) {
+  const item = document.createElement('pre');
+  item.textContent = message;
+  item.style.textAlign = textAlign;
+  item.style.fontSize = fontSize;
+  messages.appendChild(item);
 }
 
 let nickname;
@@ -18,7 +26,7 @@ socket.on('connection', ({connection_count, socket_id}) => {
   if (!nickname) {
     nickname = socket_id;
 
-    let myNickName = document.getElementById('my_nickname');
+    const myNickName = document.getElementById('my_nickname');
     myNickName.innerHTML = `My nickname is ${nickname}`;
   }
   membersCount.innerHTML = `${connection_count.toLocaleString()} 명 접속 중`;
@@ -27,11 +35,7 @@ socket.on('connection', ({connection_count, socket_id}) => {
     return;
   }
 
-  let item = document.createElement('pre');
-  item.textContent = `${socket_id} is connected\n${now()}`;
-  item.style.textAlign = 'center';
-  item.style.fontSize = '14px';
-  messages.appendChild(item);
+  appendChildMessage(`${socket_id} is connected\n${now()}`, 'center', '14px');
 });
 
 let typing_ids_set = new Set();
@@ -49,12 +53,7 @@ function deleteTypingId(id) {
 socket.on('disconnection', ({connection_count, socket_id}) => {
   membersCount.innerHTML = `${connection_count.toLocaleString()} 명 접속 중`;
   deleteTypingId(socket_id);
-
-  let item = document.createElement('pre');
-  item.textContent = `${socket_id} is disconnected\n${now()}`;
-  item.style.textAlign = 'center';
-  item.style.fontSize = '14px';
-  messages.appendChild(item);
+  appendChildMessage(`${socket_id} is disconnected\n${now()}`, 'center', '14px');
 });
 
 socket.on('chat message typing', ({nickname: senderName, message}) => {
@@ -74,15 +73,15 @@ socket.on('chat message typing', ({nickname: senderName, message}) => {
 });
 
 socket.on('chat message', ({nickname: senderName, message}) => {
-  let item = document.createElement('pre');
+  let textAlign = 'left';
   if (nickname === senderName) {
-    item.style.textAlign = 'right';
+    textAlign = 'right';
   } else {
     message = `<${senderName}>\n${message}`;
     deleteTypingId(senderName);
   }
-  item.textContent = message;
-  messages.appendChild(item);
+
+  appendChildMessage(message, textAlign, '18px');
 
   window.scrollTo(0, document.body.scrollHeight);
 });
