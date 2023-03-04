@@ -2,19 +2,23 @@
 // https://story.pxd.co.kr/1620
 const socket = io();
 
-let messages = document.getElementById('messages');
-let form = document.getElementById('form');
+const messages = document.getElementById('messages');
+const form = document.getElementById('form');
+
 let input = document.getElementById('input');
 let typing = document.getElementById('typing');
-typing.attributes.ids = new Set();
-
 let membersCount = document.getElementById('members_count');
-let myNickName = document.getElementById('my_nickname');
+
+function now() {
+  return moment().format('YY.M.D ddd HH:mm:ss');
+}
 
 let nickname;
 socket.on('connection', ({connection_count, socket_id}) => {
   if (!nickname) {
     nickname = socket_id;
+
+    let myNickName = document.getElementById('my_nickname');
     myNickName.innerHTML = `My nickname is ${nickname}`;
   }
   membersCount.innerHTML = `${connection_count.toLocaleString()} 명 접속 중`;
@@ -24,16 +28,17 @@ socket.on('connection', ({connection_count, socket_id}) => {
   }
 
   let item = document.createElement('pre');
-  item.textContent = `${socket_id} is connected\n${moment().format('YY.M.D ddd HH:mm:ss')}`;
+  item.textContent = `${socket_id} is connected\n${now()}`;
   item.style.textAlign = 'center';
   item.style.fontSize = '14px';
   messages.appendChild(item);
 });
 
+let typing_ids_set = new Set();
 function deleteTypingId(id) {
-  typing.attributes.ids.delete(id);
-  if (typing.attributes.ids.size > 0) {
-    typing.innerHTML = `[${Array.from(typing.attributes.ids).slice(0, 5).join(', ')}] typing ...`;
+  typing_ids_set.delete(id);
+  if (typing_ids_set.size > 0) {
+    typing.innerHTML = `[${Array.from(typing_ids_set).slice(0, 5).join(', ')}] typing ...`;
     typing.style.display = 'block';
   } else {
     typing.innerHTML = '';
@@ -46,7 +51,7 @@ socket.on('disconnection', ({connection_count, socket_id}) => {
   deleteTypingId(socket_id);
 
   let item = document.createElement('pre');
-  item.textContent = `${socket_id} is disconnected\n${moment().format('YY.M.D ddd HH:mm:ss')}`;
+  item.textContent = `${socket_id} is disconnected\n${now()}`;
   item.style.textAlign = 'center';
   item.style.fontSize = '14px';
   messages.appendChild(item);
@@ -61,10 +66,10 @@ socket.on('chat message typing', ({nickname: senderName, message}) => {
     return deleteTypingId(senderName);
   }
 
-  if (!typing.attributes.ids.has(senderName)) {
-    typing.attributes.ids.add(senderName);
+  if (!typing_ids_set.has(senderName)) {
+    typing_ids_set.add(senderName);
   }
-  typing.innerHTML = `[${Array.from(typing.attributes.ids).slice(0, 5).join(', ')}] typing ...`;
+  typing.innerHTML = `[${Array.from(typing_ids_set).slice(0, 5).join(', ')}] typing ...`;
   typing.style.display = 'block';
 });
 
@@ -90,7 +95,7 @@ function sendMessage(event) {
 
   socket.emit('chat message', {
     nickname,
-    message: `${input.value}\n${moment().format('YY.M.D ddd HH:mm:ss')}`
+    message: `${input.value}\n${now()}`
   });
   input.value = '';
 };
