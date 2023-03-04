@@ -16,10 +16,14 @@ function appendChildMessage(message, from) {
   item.textContent = message;
 
   if (from === 'me') {
-    item.style.backgroundColor = '#e7e700';
-    item.style.border = '1px solid #e7e700';
+    item.style.background = '#e4e400';
+    item.style.border = '1px solid #e4e400';
     item.style.textAlign = 'right';
-  } else if (from === 'system') {
+  } else if (from === 'you') {
+    item.style.background = '#666666';
+    item.style.border = '1px solid #666666';
+    item.style.color = '#f7f7f7';
+  } else {
     item.style.fontSize = '14px';
     item.style.textAlign = 'center';
     item.style.width = '300px';
@@ -93,7 +97,7 @@ socket.on('chat message', ({nickname: senderName, message}) => {
     deleteTypingId(senderName);
   }
 
-  appendChildMessage(message, isMyMsg && 'me');
+  appendChildMessage(message, isMyMsg ? 'me' : 'you');
 
   if (isMyMsg) {
     window.scrollTo(0, document.body.scrollHeight);
