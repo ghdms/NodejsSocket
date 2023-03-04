@@ -1,0 +1,12 @@
+{
+  "name": "socket-chat-example",
+  "version": "0.0.1",
+  "description": "my first socket.io app",
+  "dependencies": {
+    "express": "^4.18.2",
+    "http": "0.0.1-security",
+    "socket.io": "^4.6.0",
+    "moment-timezone": "^0.5.40",
+    "ngrok": "^4.3.3"
+  }
+}
