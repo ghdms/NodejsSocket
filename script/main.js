@@ -95,7 +95,9 @@ socket.on('chat message', ({nickname: senderName, message}) => {
 
   appendChildMessage(message, isMyMsg && 'me');
 
-  window.scrollTo(0, document.body.scrollHeight);
+  if (isMyMsg) {
+    window.scrollTo(0, document.body.scrollHeight);
+  }
 });
 
 function sendMessage(event) {
