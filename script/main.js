@@ -2,9 +2,6 @@
 // https://story.pxd.co.kr/1620
 const socket = io();
 
-const messages = document.getElementById('messages');
-const form = document.getElementById('form');
-
 const input = document.getElementById('input');
 const typing = document.getElementById('typing');
 const membersCount = document.getElementById('members_count');
@@ -13,6 +10,7 @@ function now() {
   return moment().format('YY.M.D ddd HH:mm:ss');
 }
 
+const messages = document.getElementById('messages');
 function appendChildMessage(message, textAlign, fontSize) {
   const item = document.createElement('pre');
   item.textContent = message;
@@ -72,6 +70,12 @@ socket.on('chat message typing', ({nickname: senderName, message}) => {
   typing.style.display = 'block';
 });
 
+const form = document.getElementById('form');
+form.addEventListener('input', event => {
+  event.preventDefault();
+  socket.emit('chat message typing', {nickname, message: input.value});
+});
+
 socket.on('chat message', ({nickname: senderName, message}) => {
   let textAlign = 'left';
   if (nickname === senderName) {
@@ -111,8 +115,3 @@ function inputKeyDown(event) {
 
   sendMessage(event);
 };
-
-form.addEventListener('input', event => {
-  event.preventDefault();
-  socket.emit('chat message typing', {nickname, message: input.value});
-});
