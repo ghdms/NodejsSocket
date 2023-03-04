@@ -11,11 +11,21 @@ function now() {
 }
 
 const messages = document.getElementById('messages');
-function appendChildMessage(message, textAlign, fontSize) {
+function appendChildMessage(message, from) {
   const item = document.createElement('pre');
   item.textContent = message;
-  item.style.textAlign = textAlign;
-  item.style.fontSize = fontSize;
+
+  if (from === 'me') {
+    item.style.backgroundColor = '#e7e700';
+    item.style.border = '1px solid #e7e700';
+    item.style.textAlign = 'right';
+  } else if (from === 'system') {
+    item.style.fontSize = '14px';
+    item.style.textAlign = 'center';
+    item.style.width = '300px';
+    item.style.marginRight = 'auto';
+    item.style.marginLeft = 'auto';
+  }
   messages.appendChild(item);
 }
 
@@ -33,7 +43,7 @@ socket.on('connection', ({connection_count, socket_id}) => {
     return;
   }
 
-  appendChildMessage(`${socket_id} is connected\n${now()}`, 'center', '14px');
+  appendChildMessage(`${socket_id} is connected\n${now()}`, 'system');
 });
 
 let typing_ids_set = new Set();
@@ -51,7 +61,7 @@ function deleteTypingId(id) {
 socket.on('disconnection', ({connection_count, socket_id}) => {
   membersCount.innerHTML = `${connection_count.toLocaleString()} 명 접속 중`;
   deleteTypingId(socket_id);
-  appendChildMessage(`${socket_id} is disconnected\n${now()}`, 'center', '14px');
+  appendChildMessage(`${socket_id} is disconnected\n${now()}`, 'system');
 });
 
 socket.on('chat message typing', ({nickname: senderName, message}) => {
@@ -77,15 +87,13 @@ form.addEventListener('input', event => {
 });
 
 socket.on('chat message', ({nickname: senderName, message}) => {
-  let textAlign = 'left';
-  if (nickname === senderName) {
-    textAlign = 'right';
-  } else {
+  const isMyMsg = nickname === senderName;
+  if (!isMyMsg) {
     message = `<${senderName}>\n${message}`;
     deleteTypingId(senderName);
   }
 
-  appendChildMessage(message, textAlign, '18px');
+  appendChildMessage(message, isMyMsg && 'me');
 
   window.scrollTo(0, document.body.scrollHeight);
 });
