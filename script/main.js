@@ -17,23 +17,36 @@ function isBottomScroll() {
 const messages = document.getElementById('messages');
 function appendChildMessage(message, from) {
   const item = document.createElement('pre');
-  item.textContent = message;
 
-  const maxLineLength = Math.max(...message.split("\n").map(m => m.length));
+  let messagesPerLine = message.split("\n");
+  let messagesSplited = [];
+  const maxLength = parseInt(window.innerWidth / 17);
+  messagesPerLine.forEach(m => {
+    while (m.length >= maxLength) {
+      messagesSplited.push(m.substring(0, maxLength));
+      m = m.substring(maxLength);
+    }
+    if (!!m) {
+      messagesSplited.push(m);
+    }
+  });
+  item.textContent = messagesSplited.join("\n");
+
+  const maxLineLength = Math.max(...messagesSplited.map(m => m.length));
   if (from === 'me') {
     item.style.background = '#e4e400';
     item.style.border = '1px solid #e4e400';
-    item.style.width = `${maxLineLength * 18}px`;
+    item.style.width = `${maxLineLength * 16}px`;
     item.style.marginLeft = 'auto';
   } else if (from === 'you') {
     item.style.background = '#666666';
     item.style.border = '1px solid #666666';
     item.style.color = '#f7f7f7';
-    item.style.width = `${maxLineLength * 18}px`;
+    item.style.width = `${maxLineLength * 16}px`;
   } else {
     item.style.fontSize = '14px';
     item.style.textAlign = 'center';
-    item.style.width = `${maxLineLength * 14}px`;
+    item.style.width = `${maxLineLength * 13}px`;
     item.style.marginRight = 'auto';
     item.style.marginLeft = 'auto';
   }
