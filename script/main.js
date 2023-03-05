@@ -113,13 +113,17 @@ socket.on('chat message', ({nickname: senderName, message}) => {
 
 function sendMessage(event) {
   event.preventDefault();
-  if (!input.value) {
+  const message = input.value;
+  if (!message) {
+    return;
+  }
+  if (!message.replace(/\n|\s/g, '')) {
     return;
   }
 
   socket.emit('chat message', {
     nickname,
-    message: `${input.value}\n${now()}`
+    message: `${message}\n${now()}`
   });
   input.value = '';
 };
