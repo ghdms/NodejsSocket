@@ -75,10 +75,11 @@ socket.on('connection', ({connection_count, socket_id}) => {
 });
 
 let typing_ids_set = new Set();
+const maxTypingCount = 5;
 function deleteTypingId(id) {
   typing_ids_set.delete(id);
   if (typing_ids_set.size > 0) {
-    typing.innerHTML = `[${Array.from(typing_ids_set).slice(0, 5).join(', ')}] typing ...`;
+    typing.innerHTML = `[${Array.from(typing_ids_set).slice(0, maxTypingCount).join(', ')}] typing ...`;
     typing.style.display = 'block';
   } else {
     typing.innerHTML = '';
@@ -104,7 +105,7 @@ socket.on('chat message typing', ({nickname: senderName, message}) => {
   if (!typing_ids_set.has(senderName)) {
     typing_ids_set.add(senderName);
   }
-  typing.innerHTML = `[${Array.from(typing_ids_set).slice(0, 5).join(', ')}] typing ...`;
+  typing.innerHTML = `[${Array.from(typing_ids_set).slice(0, maxTypingCount).join(', ')}] typing ...`;
   typing.style.display = 'block';
 });
 
@@ -126,6 +127,7 @@ socket.on('chat message', ({nickname: senderName, message}) => {
 
 function sendMessage(event) {
   event.preventDefault();
+
   const message = input.value;
   if (!message) {
     return;
@@ -141,8 +143,9 @@ function sendMessage(event) {
   input.value = '';
 };
 
+const enterKeyCode = 13;
 function inputKeyDown(event) {
-  if (event.keyCode !== 13 || event.shiftKey) {
+  if (event.keyCode !== enterKeyCode || event.shiftKey) {
     return;
   }
 
