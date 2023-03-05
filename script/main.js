@@ -19,18 +19,21 @@ function appendChildMessage(message, from) {
   const item = document.createElement('pre');
   item.textContent = message;
 
+  const maxLineLength = Math.max(...message.split("\n").map(m => m.length));
   if (from === 'me') {
     item.style.background = '#e4e400';
     item.style.border = '1px solid #e4e400';
-    item.style.textAlign = 'right';
+    item.style.width = `${maxLineLength * 18}px`;
+    item.style.marginLeft = 'auto';
   } else if (from === 'you') {
     item.style.background = '#666666';
     item.style.border = '1px solid #666666';
     item.style.color = '#f7f7f7';
+    item.style.width = `${maxLineLength * 18}px`;
   } else {
     item.style.fontSize = '14px';
     item.style.textAlign = 'center';
-    item.style.width = '300px';
+    item.style.width = `${maxLineLength * 14}px`;
     item.style.marginRight = 'auto';
     item.style.marginLeft = 'auto';
   }
