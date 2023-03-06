@@ -6,8 +6,12 @@ const input = document.getElementById('input');
 const typing = document.getElementById('typing');
 const membersCount = document.getElementById('members_count');
 
-function now() {
-  return moment().format('YY.M.D ddd HH:mm:ss');
+function nowDate() {
+  return moment().format('YYYY년 M월 D일 (ddd)');
+}
+
+function nowTime() {
+  return moment().format('HH:mm:ss');
 }
 
 function isBottomScroll() {
@@ -68,10 +72,11 @@ socket.on('connection', ({connection_count, socket_id}) => {
   membersCount.innerHTML = `${connection_count.toLocaleString()} 명 접속 중`;
 
   if (nickname === socket_id) {
+    appendChildMessage(nowDate(), 'system');
     return;
   }
 
-  appendChildMessage(`${socket_id} is connected\n${now()}`, 'system');
+  appendChildMessage(`${socket_id} is connected\n-${nowTime()}-`, 'system');
 });
 
 let typing_ids_set = new Set();
@@ -90,7 +95,7 @@ function deleteTypingId(id) {
 socket.on('disconnection', ({connection_count, socket_id}) => {
   membersCount.innerHTML = `${connection_count.toLocaleString()} 명 접속 중`;
   deleteTypingId(socket_id);
-  appendChildMessage(`${socket_id} is disconnected\n${now()}`, 'system');
+  appendChildMessage(`${socket_id} is disconnected\n-${nowTime()}-`, 'system');
 });
 
 socket.on('chat message typing', ({nickname: senderName, message}) => {
@@ -115,14 +120,14 @@ form.addEventListener('input', event => {
   socket.emit('chat message typing', {nickname, message: input.value});
 });
 
-socket.on('chat message', ({nickname: senderName, message}) => {
-  const isMyMsg = nickname === senderName;
-  if (!isMyMsg) {
+socket.on('chat message', ({system, nickname: senderName, message}) => {
+  const from = system ? 'system' : (nickname === senderName ? 'me' : 'you');
+  if (from === 'you') {
     message = `<${senderName}>\n${message}`;
     deleteTypingId(senderName);
   }
 
-  appendChildMessage(message, isMyMsg ? 'me' : 'you');
+  appendChildMessage(message, from);
 });
 
 function sendMessage(event) {
@@ -138,7 +143,7 @@ function sendMessage(event) {
 
   socket.emit('chat message', {
     nickname,
-    message: `${message}\n${now()}`
+    message: `${message}\n-${nowTime()}-`
   });
   input.value = '';
 };
