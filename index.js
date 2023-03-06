@@ -19,7 +19,7 @@ io.on('connection', socket => {
 
   socket.on('chat message', data => {
     console.log('message:', data);
-    socket.emit('chat message', data);
+    io.emit('chat message', data);
   });
 
   socket.on('chat message typing', data => {
