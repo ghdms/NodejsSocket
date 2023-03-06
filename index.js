@@ -19,18 +19,18 @@ io.on('connection', socket => {
 
   socket.on('chat message', data => {
     console.log('message:', data);
-    io.emit('chat message', data);
+    socket.emit('chat message', data);
   });
 
   socket.on('chat message typing', data => {
     console.log('message typing:', data);
-    io.emit('chat message typing', data);
+    socket.broadcast.emit('chat message typing', data);
   });
 
   socket.on('disconnect', data => {
     connection_count--;
     console.log('user disconnected', data, connection_count);
-    io.emit('disconnection', {connection_count, socket_id: socket.id});
+    socket.broadcast.emit('disconnection', {connection_count, socket_id: socket.id});
   });
 
   const dateFormat = 'YYYY년 M월 D일 (ddd)';

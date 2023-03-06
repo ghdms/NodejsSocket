@@ -99,10 +99,6 @@ socket.on('disconnection', ({connection_count, socket_id}) => {
 });
 
 socket.on('chat message typing', ({nickname: senderName, message}) => {
-  if (nickname === senderName) {
-    return;
-  }
-
   if (!message) {
     return deleteTypingId(senderName);
   }
