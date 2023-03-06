@@ -27,9 +27,9 @@ io.on('connection', socket => {
     socket.broadcast.emit('chat message typing', data);
   });
 
-  socket.on('disconnect', data => {
+  socket.on('disconnect', () => {
     connection_count--;
-    console.log('user disconnected', data, connection_count);
+    console.log('user disconnected', connection_count);
     socket.broadcast.emit('disconnection', {connection_count, socket_id: socket.id});
   });
 
