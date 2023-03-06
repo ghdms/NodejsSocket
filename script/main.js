@@ -63,20 +63,18 @@ function appendChildMessage(message, from) {
 
 let nickname;
 socket.on('connection', ({connection_count, socket_id}) => {
-  if (!nickname) {
-    nickname = socket_id;
-
-    const myNickName = document.getElementById('my_nickname');
-    myNickName.innerHTML = `My nickname is ${nickname}`;
-  }
   membersCount.innerHTML = `${connection_count.toLocaleString()} 명 접속 중`;
 
-  if (nickname === socket_id) {
-    appendChildMessage(nowDate(), 'system');
-    return;
+  if (nickname) {
+    return appendChildMessage(`${socket_id} is connected\n-${nowTime()}-`, 'system');
   }
 
-  appendChildMessage(`${socket_id} is connected\n-${nowTime()}-`, 'system');
+  nickname = socket_id;
+
+  const myNickName = document.getElementById('my_nickname');
+  myNickName.innerHTML = `My nickname is ${nickname}`;
+
+  appendChildMessage(nowDate(), 'system');
 });
 
 let typing_ids_set = new Set();
@@ -103,9 +101,11 @@ socket.on('chat message typing', ({nickname: senderName, message}) => {
     return deleteTypingId(senderName);
   }
 
-  if (!typing_ids_set.has(senderName)) {
-    typing_ids_set.add(senderName);
+  if (typing_ids_set.has(senderName)) {
+    return;
   }
+
+  typing_ids_set.add(senderName);
   typing.innerHTML = `[${Array.from(typing_ids_set).slice(0, maxTypingCount).join(', ')}] typing ...`;
   typing.style.display = 'block';
 });
@@ -130,10 +130,7 @@ function sendMessage(event) {
   event.preventDefault();
 
   const message = input.value;
-  if (!message) {
-    return;
-  }
-  if (!message.replace(/\n|\s/g, '')) {
+  if (!message.trim()) {
     return;
   }
 
