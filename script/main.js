@@ -51,6 +51,11 @@ function appendChildMessage(message, from, senderName='') {
 
   messages.appendChild(item);
 
+  const time = document.createElement('div');
+  time.classList = `time time_${from}`;
+  time.innerHTML = nowTime();
+  messages.appendChild(time);
+
   if (from === 'me' || isBottomScroll()) {
     window.scrollTo(0, document.body.scrollHeight);
   }
@@ -61,7 +66,7 @@ socket.on('connection', ({connection_count, socket_id}) => {
   membersCount.innerHTML = `${connection_count.toLocaleString()} 명 접속 중`;
 
   if (nickname) {
-    return appendChildMessage(`${socket_id} is connected\n-${nowTime()}-`, 'system');
+    return appendChildMessage(`${socket_id} is connected`, 'system');
   }
 
   nickname = socket_id;
@@ -88,7 +93,7 @@ function deleteTypingId(id) {
 socket.on('disconnection', ({connection_count, socket_id}) => {
   membersCount.innerHTML = `${connection_count.toLocaleString()} 명 접속 중`;
   deleteTypingId(socket_id);
-  appendChildMessage(`${socket_id} is disconnected\n-${nowTime()}-`, 'system');
+  appendChildMessage(`${socket_id} is disconnected`, 'system');
 });
 
 socket.on('chat message typing', ({nickname: senderName, message}) => {
@@ -128,10 +133,7 @@ function sendMessage(event) {
     return;
   }
 
-  socket.emit('chat message', {
-    nickname,
-    message: `${message}\n-${nowTime()}-`
-  });
+  socket.emit('chat message', {nickname, message});
   input.value = '';
 };
 
