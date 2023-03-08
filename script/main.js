@@ -23,10 +23,9 @@ function appendChildMessage(message, from) {
   const item = document.createElement('pre');
   item.classList = from;
 
-  let messagesPerLine = message.split("\n");
   let messagesSplited = [];
   const maxLength = parseInt(window.innerWidth / 17);
-  messagesPerLine.forEach(m => {
+  message.split("\n").forEach(m => {
     while (m.length >= maxLength) {
       messagesSplited.push(m.substring(0, maxLength));
       m = m.substring(maxLength);
