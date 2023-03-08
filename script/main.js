@@ -19,7 +19,7 @@ function isBottomScroll() {
 }
 
 const messages = document.getElementById('messages');
-function appendChildMessage(message, from) {
+function appendChildMessage(message, from, senderName='') {
   const item = document.createElement('pre');
   item.classList = from;
 
@@ -39,6 +39,16 @@ function appendChildMessage(message, from) {
   const maxLineLength = Math.max(...messagesSplited.map(m => m.length));
   const widthMul = from === 'system' ? 10 : 15.5;
   item.style.width = `${maxLineLength * widthMul}px`;
+
+  if (from === 'you') {
+    const name = document.createElement('div');
+    name.classList = 'sender_name';
+    name.innerHTML = senderName;
+    messages.appendChild(name);
+
+    item.style.marginTop = 0;
+  }
+
   messages.appendChild(item);
 
   if (from === 'me' || isBottomScroll()) {
@@ -104,11 +114,10 @@ form.addEventListener('input', event => {
 socket.on('chat message', ({system, nickname: senderName, message}) => {
   const from = system ? 'system' : (nickname === senderName ? 'me' : 'you');
   if (from === 'you') {
-    message = `<${senderName}>\n${message}`;
     deleteTypingId(senderName);
   }
 
-  appendChildMessage(message, from);
+  appendChildMessage(message, from, senderName);
 });
 
 function sendMessage(event) {
