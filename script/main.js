@@ -40,6 +40,7 @@ function appendChildMessage(message, from, senderName='') {
   const widthMul = from === 'system' ? 10 : 15.5;
   item.style.width = `${maxLineLength * widthMul}px`;
 
+  const scrollTo = from === 'me' || isBottomScroll();
   if (from === 'you') {
     const name = document.createElement('div');
     name.classList = 'sender_name';
@@ -56,7 +57,7 @@ function appendChildMessage(message, from, senderName='') {
   time.innerHTML = nowTime();
   messages.appendChild(time);
 
-  if (from === 'me' || isBottomScroll()) {
+  if (scrollTo) {
     window.scrollTo(0, document.body.scrollHeight);
   }
 }
