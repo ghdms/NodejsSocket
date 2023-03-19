@@ -18,6 +18,14 @@ function isBottomScroll() {
   return window.outerHeight + window.scrollY >= document.body.scrollHeight;
 }
 
+function widthMul(from) {
+  if (from === 'system') {
+    return 10;
+  }
+
+  return 15.5;
+}
+
 const messages = document.getElementById('messages');
 function appendChildMessage(message, from, senderName='') {
   const item = document.createElement('pre');
@@ -37,8 +45,7 @@ function appendChildMessage(message, from, senderName='') {
   item.textContent = messagesSplited.join("\n");
 
   const maxLineLength = Math.max(...messagesSplited.map(m => m.length));
-  const widthMul = from === 'system' ? 10 : 15.5;
-  item.style.width = `${maxLineLength * widthMul}px`;
+  item.style.width = `${maxLineLength * widthMul(from)}px`;
 
   const scrollTo = from === 'me' || isBottomScroll();
   if (from === 'you') {
