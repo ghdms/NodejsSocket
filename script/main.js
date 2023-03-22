@@ -60,8 +60,8 @@ function appendChildMessage(message, from, senderName='') {
   messages.appendChild(item);
 
   const time = document.createElement('div');
-  time.classList = `time time_${from}`;
   time.innerHTML = nowTime();
+  time.classList = `time time_${from}`;
   messages.appendChild(time);
 
   if (scrollTo) {
@@ -77,12 +77,12 @@ socket.on('connection', ({connection_count, socket_id}) => {
     return appendChildMessage(`${socket_id} is connected`, 'system');
   }
 
+  appendChildMessage(nowDate(), 'system');
+
   nickname = socket_id;
 
   const myNickName = document.getElementById('my_nickname');
   myNickName.innerHTML = `My nickname is ${nickname}`;
-
-  appendChildMessage(nowDate(), 'system');
 });
 
 let typing_ids_set = new Set();
